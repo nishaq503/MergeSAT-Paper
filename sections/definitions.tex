@@ -1,1 +1,99 @@
-Let's define our terms.
+We set up the problem with some definitions.
+
+
+\subsection*{3-SAT Instance}
+
+A 3-SAT \textit{instance} of size $(m, k)$ is a conjunction of $m$ \textit{clauses}, where each \textit{clause} is a disjunction of three \textit{literals}, where \textit{literal} is either a \textit{variable} or the \textit{negation of a variable}, where each \textit{variable} is taken from a set of $k$ \textit{variables}.
+\begin{align*}
+    \Phi & \coloneqq C_1 \land C_2 \land \ldots \land C_m \\
+    where~ C_i & \coloneqq (x \lor y \lor z)~ \forall i \in \{ 1 \ldots m \} \\
+    where~ x, y, z & \in \{ x_1 \ldots x_k, \lnot x_1 \ldots \lnot x_k \}
+\end{align*}
+
+
+\subsection*{Satisfiability}
+
+If an instance has at least one set of mappings from its variables to truth values then it is \textit{satisfiable}, otherwise it is \textit{unsatisfiable}.
+\begin{align*}
+    \Phi~ is~ satisfiable~ & \Leftrightarrow~ \exists~ \rchi \mid \Phi(\rchi) = T \\
+    \Phi~ is~ unsatisfiable~ & \Leftrightarrow~ \lnot \exists~ \rchi \mid \Phi(\rchi) = T
+\end{align*}
+
+If after assigning truth values to some, but not all, variables and evaluating the instance we find that there are some clauses left whose truth value is ambiguous, we say that the instance is, as yet, \textit{undecided}.
+
+
+\subsection*{Certificate}
+
+A \textit{certificate} is a set of mappings from each variable $x_i$ to a truth value such that the set of assignments satisfies a given instance.
+\begin{align*}
+    \rchi :~ x_i \mapsto \{ T,~ F \}~ \forall i \in \{ 1 \ldots k \}
+    \mid \Phi(\rchi) = T
+\end{align*}
+
+
+\subsection*{Min-Certificate}
+
+A certificate may not need to specify a mapping for \textbf{every} variable in an instance.
+Some instances can be satisfied by assigning a mapping for some, but not all, of the variables in that instance.
+
+A \textit{min-certificate} is a special case of a certificate with the property that removing even one mapping from the certificate leads to the instance being left undecided.
+
+For example:
+\begin{align*}
+    \phi & = (x_1 \lor \lnot x_2 \lor x_3) \land (\lnot x_2 \land \lnot x_3 \land x_4) \\
+\end{align*}
+can be satisfied by $ \rchi = \{ x_2 \mapsto F \} $.
+This leaves $3$ variables unmapped, which leads to $2^3$ full certificates.
+$\rchi$ is a \textit{min-certificate} for the 3-SAT instance $\Phi$.
+
+There are other possible min-certificates for this example.
+For example:
+\begin{itemize}
+    \item $\{ x_1 \mapsto T,~ x_3 \mapsto F \}$ which leads to $2^2$ full certificates.
+    \item $\{ x_3 \mapsto T,~ x_4 \mapsto T \}$ which leads to $2^2$ full certificates.
+\end{itemize}
+
+For the remainder of this paper, the term certificate will be overloaded with this definition of a min-certificate.
+
+
+\subsection*{Child Instances}
+
+Given an instance $\Phi$ with more than one clause, we define two instances, $\phi_{left}$ and $\phi_{right}$, whose clauses are disjoint subsets of the set of clauses from $\Phi$, such that $\Phi = \phi_{left} \land \phi_{right}$.
+
+$\phi_{left}$ and $\phi_{right}$ are \textit{child instances} with $\Phi$ as the \textit{parent instance}.
+$\phi_{left}$ and $\phi_{right}$ are \textit{siblings} to each other.
+
+We have:
+\begin{align*}
+    \phi_{left},~ \phi_{right} \subset \Phi
+    \mid \Phi = \phi_{left} \land \phi_{right},~
+    \phi_{left} \cap \phi_{right} = \emptyset
+\end{align*}
+
+\subsection*{Child Certificates}
+
+$\Phi$ is satisfiable if and only if $\phi_{left}$ and $\phi_{right}$ are satisfiable.
+In other words, $\Phi$ has a certificate if and only if each child instance has at least one certificate.
+The certificates for child instances are called \textit{child certificates}.
+
+Given $\Phi$ and $\rchi$, we can find a child certificate, $\rchi_{child}$, for $\phi_{child}$ by taking the subset of $\rchi$ of mappings of the variables that are present in $\phi_{child}$.
+
+
+\subsection*{Certificate Compatibility}
+
+Given sibling instances, $\phi_{left}$ and $\phi_{right}$, and their respective certificates, $\rchi_{left}$ and $\rchi_{right}$, we define \textit{certificate compatibility} in the following way.
+\begin{align*}
+    & \rchi_{left}~ is~ compatible~ with~ \phi_{right} \\
+    \Leftrightarrow~ & \phi_{right}(\rchi_{left})~ is~ either~ True~ or~ Undecided
+\end{align*}
+
+
+\subsection*{Base-Case Instance}
+
+A \textit{base-case instance}, $\phi_{base}$, is a special case of an instance in which all clauses have a variable, or its negation, in common.
+\begin{align*}
+    let~ \phi_{base} & \coloneqq C_1 \land C_2 \land \ldots \land C_m \\
+    s.t.~ either~ x_j & \in C_i~ or~ \lnot x_j \in C_i \\
+    for~ each~ i & \in \{ 1 \dots m \} \\
+    for~ some~ j & \in \{ 1 \dots k \}
+\end{align*}
