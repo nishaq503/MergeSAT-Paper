@@ -1,1 +1,55 @@
 We piece together the sub-problems into the complete algorithm.
+We will assume that we remove unit clauses and pure literals at each appropriate step.
+
+
+\subsection{2-SAT Solver}
+\label{subsec:2-sat-solver}
+
+Consider a 2-SAT instance, $\Phi$ of size $(m,~ n)$.
+Partition $\Phi$ about some choice of variable, $x_j$, to obtain $\phi_{left}$ and $\phi_{right}$.
+$\phi_{left}$ is a base-case instance, while $\phi_{right}$ is a smaller 2-SAT instance which we will solve recursively.
+
+Note that if $\Phi$ is satisfiable, then $\phi_{left}$ and $\phi_{right}$ are also satisfiable and each has at least one certificate compatible with the other.
+
+Now consider a base-case 2-SAT instance, $\phi$.
+Partition $\phi$ into $\phi_1$ and $\phi_2$ such that $\phi_1$ has only those clauses that contain $x_j$ and $\phi_2$ has only those clauses that contain $\lnot x_j$.
+
+There are at most two possible certificates for each of $\phi_1$ and $\phi_2$.
+For $\phi_1$, let us call these certificates $\rchi_{1\alpha}$ and $\rchi_{1\beta}$.
+
+$\rchi_{1\alpha}$ and $\rchi_{1\beta}$ are defined as follows:
+\begin{align*}
+    \rchi_{1\alpha} & \coloneqq \{ x_j \mapsto T \} \\
+    \rchi_{1\beta} & \coloneqq \{ x_j \mapsto F,~ all~ other~ literals \mapsto T \}
+\end{align*}
+
+$\rchi_{1\beta}$ exists if and only if all variables, other than $x_j$, are present as pure literals, i.e.\ if a variable is present then its negation is absent.
+
+By symmetry, we have:
+\begin{align*}
+    \rchi_{2\alpha} & \coloneqq \{ x_j \mapsto F \} \\
+    \rchi_{2\beta} & \coloneqq \{ x_j \mapsto T,~ all~ other~ literals \mapsto T \}
+\end{align*}
+
+for $\phi_2$.
+Note that $\rchi_{1\alpha} \subset \rchi_{2\beta}$ and $\rchi_{2\alpha} \subset \rchi_{1\beta}$.
+
+If $\phi$ is satisfiable, then $\phi_1$ and $\phi_2$ are also satisfiable and each has at least one certificate compatible with the other.
+$\rchi_{1\alpha}$ is not compatible with $\rchi_{2\alpha}$.
+Therefore either one or both of the following must be true:
+\begin{align*}
+    \exists !~ & \rchi_{1\beta}~ compatible~ with~ \phi_2 \\
+    \exists !~ & \rchi_{2\beta}~ compatible~ with~ \phi_1
+\end{align*}
+
+Therefore either one or both of $\rchi_{1\beta}$ and $\rchi_{2\beta}$ are certificates for $\phi$.
+
+Following this procedure gives us all certificates for each pair of sibling instances.
+We then discard those certificates that are not compatible with their sibling instance.
+We then obtain the certificates for the parent instance by performing pairwise unions between the remaining certificates from each sibling.
+
+
+\subsection{3-SAT Solver}
+\label{subsec:3-sat-solver}
+
+$\dots$

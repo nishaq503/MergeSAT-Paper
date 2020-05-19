@@ -1,35 +1,34 @@
 We define some sub-problems and consider how to solve each of them.
 
 
-\subsection*{Partitioning an Instance}
+\subsection{Partitioning an Instance}
+\label{subsec:partitioning-an-instance}
 
-Given an instance $\Phi$ with variables $\{ x_1 \dots x_k \}$, we can partition $\Phi$ into two child instances about the variable $x_i$ by whether or not the clauses in $\Phi$ contain the literals $x_i$ or $\lnot x_i$.
+Given an instance $\Phi$ with variables $\{ x_1 \dots x_n \}$, we can partition $\Phi$ into two child instances about the variable $x_i$ by whether or not the clauses in $\Phi$ contain the literals $x_i$ or $\lnot x_i$.
 Without loss of generality, we can have $\phi_{left}$ be the conjunction of clauses that each \textbf{contain} the literals $x_1$ or $\lnot x_1$, and $\phi_{right}$ be the conjunction of clauses that each \textbf{do not contain} the literals $x_1$ or $\lnot x_1$.
 
-Note that $\phi_{left}$ is a base-case instance and $\phi_{right}$ is an instance of the same form as $\Phi$ but with a smaller size $(m',~ k')$ with $m' \leq m - 1$ and $k' \leq k - 1$.
+Note that $\phi_{left}$ is a base-case instance and $\phi_{right}$ is an instance of the same form as $\Phi$ but with a smaller size $(m',~ n')$ with $m' \leq m - 1$ and $n' \leq n - 1$.
+If we always remove unit clauses and pure literals, then $m' \leq m - 1$ and $n' \leq n - 2$.
 
 
-\subsection*{Solving a Base-Case Instance}
+\subsection{Solving a Base-Case Instance}
+\label{subsec:solving-a-base-case-instance}
 
-Given a base-case instance $\phi_{left}$ with the common \textit{variable} $x_j$, we can further partition $\phi_{left}$ into two child instances $\phi_{left}^1$ and $\phi_{left}^2$ such that $\phi_{left}^1$ contains only those clauses that contain the literal $x_j$ and $\phi_{left}^2$ contains only those clauses that contain the literal $\lnot x_j$.
+Given a base-case instance $\phi$ with the common \textit{variable} $x_j$, we can further partition $\phi$ into two child instances $\phi^1$ and $\phi^2$ such that $\phi^1$ contains only those clauses that contain the literal $x_j$ and $\phi^2$ contains only those clauses that contain the literal $\lnot x_j$.
 
-$\phi_{left}$ is satisfiable if and only if $\phi_{left}^1$ and $\phi_{left}^2$ are satisfiable and $\phi_{left}^1$ has at least one certificate compatible with $\phi_{left}^2$ and $\phi_{left}^2$ has at least one certificate compatible with $\phi_{left}^1$.
+$\phi$ is satisfiable if and only if $\phi^1$ and $\phi^2$ are satisfiable and $\phi^1$ has at least one certificate compatible with $\phi^2$ and $\phi^2$ has at least one certificate compatible with $\phi^1$.
 
-We will find all certificates for $\phi_{left}^1$ and $\phi_{left}^2$.
-For $\phi_{left}^1$, one certificate is $\{ x_j \mapsto True \}$.
-In order to find the other certificates, we start with $\{ x_j \mapsto False \}$ and reduce $\phi_{left}^1$ into a 2-SAT instance, i.e.\ each clause contains two literals.
-2-SAT instances are solvable in linear-time by algorithms such as [cite tarjan1979].
-We can use any of the known linear-time algorithms to find all certificates for $\phi_{left}^1$.
-By symmetry, $\phi_{left}^2$ can be satisfied by $\{ x_j \mapsto False \}$ or by starting with $\{ x_j \mapsto True \}$ and finding all certificates for the resulting 2-SAT instance.
+We will find all certificates for $\phi^1$ and $\phi^2$.
+For $\phi^1$, one certificate is $\{ x_j \mapsto True \}$.
+In order to find the other certificates, we start with $\{ x_j \mapsto False \}$ and reduce $\phi^1$ into a 2-SAT instance.
+We then find all certificates for that 2-SAT instance.
+By symmetry, $\phi^2$ can be satisfied by $\{ x_j \mapsto False \}$ or by starting with $\{ x_j \mapsto True \}$ and finding all certificates for the resulting 2-SAT instance.
 
-\subsection*{Finding Parent Certificates}
 
-Note that
-\begin{align*}
-    & \Phi~ is~ satisfiable \\
-    \Leftrightarrow~ & \exists \rchi_{right}~ compatible~ with~ \phi_{left} \\
-    and~ & \exists \rchi_{left}~ compatible~ with~ \phi_{right}
-\end{align*}
+\subsection{Finding Parent Certificates}
+\label{subsec:finding-parent-certificates}
 
-Given sibling instances and all their respective certificates, $(\phi_{left},~ \{ \rchi_{left} \})$ and $(\phi_{right},~ \{ \rchi_{right} \})$, we discard any certificate for $\phi_{left}$ that is not compatible with $\phi_{right}$ and we discard any certificate for $\phi_{right}$ that is not compatible with $\phi_{left}$.
-We then take the two sets of mutually compatible certificates and obtain the set of parent certificates by performing a pairwise union between certificates from each set.
+Given sibling instances and all their respective certificates, $\big(\phi_{left},~ \{ \rchi_{left} \}\big)$ and $\big(\phi_{right},~ \{ \rchi_{right} \}\big)$, we discard any certificate for $\phi_{left}$ that is not compatible with $\phi_{right}$ and we discard any certificate for $\phi_{right}$ that is not compatible with $\phi_{left}$.
+We then take the two sets of mutually compatible certificates and obtain the set of parent certificates by performing pairwise unions between certificates from either set.
+
+Note that $\Phi$ is satisfiable if and only if $\exists~ \rchi_{left}, \rchi_{right}$ such that $\rchi_{left}$ and $\rchi_{right}$ are mutually compatible.

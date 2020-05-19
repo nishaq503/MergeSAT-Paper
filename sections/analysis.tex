@@ -1,1 +1,38 @@
 We analyze the time and space complexity of the proposed algorithm.
+We will proceed under the assumption that variables and their negations are uniformly distributed among clauses and that no one clause has both a variable and its negation.
+This eases the analysis but it should hold even if the uniformity assumption is incorrect.
+
+
+\subsection{Partitioning an Instance}
+\label{subsec:partitioning-an-instance2}
+
+We expect for $\phi_{left}$ to have $\frac{1}{n} \cdot m$ clauses from $\Phi$ and for $\phi_{right}$ to be an instance of size $(\frac{n - 1}{n} \cdot m,~ n - 1)$.
+In the worst-case, $\phi_{left}$ will have $2$ clauses and $\phi_{right}$ will be an instance of size $(m - 1,~ n - 2)$.
+
+Since this partitioning step checks for membership of two literals in each clause, it takes $\mathcal{O}(m)$ time.
+
+
+\subsection{Solving a Base-Case Instance}
+\label{subsec:solving-a-base-case-instance2}
+
+$\dots$
+
+
+\subsection{Finding Parent Certificates}
+\label{subsec:finding-parent-certificates2}
+
+$\dots$
+
+Since there are more clauses for each certificate to satisfy, we expect a majority of certificates to be discarded in this step.
+
+
+\subsection{2-SAT Solver}
+\label{subsec:2-sat-solver2}
+
+$\dots$
+
+
+\subsection{3-SAT Solver}
+\label{subsec:3-sat-solver2}
+
+$\dots$
