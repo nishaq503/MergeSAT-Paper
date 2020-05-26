@@ -2,4 +2,7 @@
 .venv
 *.zip
 out/*
-
+/target
+benchmarks
+*.pdf
+Cargo.lock
