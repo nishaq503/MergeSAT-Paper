@@ -4,7 +4,7 @@ We define some sub-problems and consider how to solve each of them.
 \subsection{Partitioning an Instance}
 \label{subsec:partitioning-an-instance}
 
-Given an instance $\Phi$ with variables $\{ x_1 \dots x_n \}$, we can partition $\Phi$ into two child instances about the variable $x_i$ by whether or not the clauses in $\Phi$ contain the literals $x_i$ or $\lnot x_i$.
+Given an instance $\Phi$ with variables $\{ x_1 \dots x_n \}$, we can partition $\Phi$ into two child instances about the variable $x_i$ by whether the clauses in $\Phi$ contain the literals $x_i$ or $\lnot x_i$.
 Without loss of generality, we can have $\phi_{left}$ be the conjunction of clauses that each \textbf{contain} the literals $x_1$ or $\lnot x_1$, and $\phi_{right}$ be the conjunction of clauses that each \textbf{do not contain} the literals $x_1$ or $\lnot x_1$.
 
 Note that $\phi_{left}$ is a base-case instance and $\phi_{right}$ is an instance of the same form as $\Phi$ but with a smaller size $(m',~ n')$ with $m' \leq m - 1$ and $n' \leq n - 1$.

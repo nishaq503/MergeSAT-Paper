@@ -6,3 +6,17 @@ out/*
 benchmarks
 *.pdf
 Cargo.lock
+paper.aux
+paper.bbl
+paper.blg
+paper.log
+paper.out
+paper.synctex.gz
+
+
+#Added by cargo
+#
+#already existing elements were commented out
+
+#/target
+#Cargo.lock

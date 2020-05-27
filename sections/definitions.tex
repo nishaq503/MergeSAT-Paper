@@ -4,7 +4,10 @@ We set up the problem with some definitions.
 \subsection{3-SAT Instance}
 \label{subsec:3-sat-instance}
 
-A 3-SAT \textit{instance} of size $(m, n)$ is a conjunction of $m$ \textit{clauses}, where each \textit{clause} is a disjunction of three \textit{literals}, where \textit{literal} is either a \textit{variable} or the \textit{negation of a variable}, where each \textit{variable} is taken from a set of $n$ \textit{variables}.
+A 3-SAT \textit{instance} of size $(m, n)$ is a conjunction of $m$ \textit{clauses}.
+Each \textit{clause} is a disjunction of three \textit{literals}.
+Each \textit{literal} is either a \textit{variable} or the \textit{negation of a variable}.
+Each \textit{variable} is taken from a set of $n$ \textit{variables}.
 \begin{align*}
     \Phi & \coloneqq C_1 \land C_2 \land \ldots \land C_m \\
     where~ C_i & \coloneqq (x \lor y \lor z)~ \forall i \in \{ 1 \ldots m \} \\
@@ -27,7 +30,7 @@ All clauses containing a \textit{pure literal} can be satisfied by setting that 
 \subsection{Certificate}
 \label{subsec:certificate}
 
-A \textit{certificate}, $\rchi$, is a set of mappings from each variable $x_i$ to a truth value such that the set of assignments satisfies a given instance.
+A \textit{certificate} ($\rchi$) is a set of mappings from each variable $x_i$ to a truth value such that the set of assignments satisfies a given instance.
 \begin{align*}
     \rchi :~ x_i \mapsto \{ T,~ F \}~ \forall i \in \{ 1 \ldots n \}
     \mid \Phi(\rchi) = T
@@ -52,7 +55,7 @@ If after assigning truth values to some, but not all, variables and evaluating t
 A certificate may not need to specify a mapping for \textbf{every} variable in an instance.
 Some instances can be satisfied by assigning a mapping for some, but not all, of the variables in that instance.
 
-A \textit{min-certificate} is a special case of a certificate with the property that removing even one mapping from the certificate leads to the instance being left undecided.
+A \textit{min-certificate} is a special case of a certificate with the property that removing even one mapping from the certificate leaves the instance undecided.
 
 For example:
 \begin{align*}
@@ -91,7 +94,7 @@ $\phi_{left}$ and $\phi_{right}$ are \textit{siblings} to each other.
 
 If $\Phi$ is satisfiable then so are its child instances $\phi_{left}$ and $\phi_{right}$.
 In other words, if $\Phi$ has a certificate then each child instance has at least one certificate.
-The certificates for child instances are called \textit{child certificates}.
+We call yhe certificates for child instances \textit{child certificates}.
 
 Given $\Phi$ and $\rchi$, we can find a child certificate, $\rchi_{child}$, for $\phi_{child}$ by taking the subset of $\rchi$ of mappings of the variables that are present in $\phi_{child}$.
 
@@ -132,22 +135,22 @@ A \textit{base-case instance}, $\phi_{base}$, is a special case of an instance i
     Cascade of assignments:
         Assignments made due to Unit Clauses and Pure Literals.
         Cascades can be chained, e.g. assigning a Unit Clause may cause the formation of other unit clauses.
-        A chain of cascades is also a cascade.
+        A chain of Cascades is also a Cascade.
 
     Certificate:
-        A set of assignments for variables s.t. the rest of the SAT instance is satisfied by a cascade.
+        A set of assignments for variables s.t. a Cascade satisfies the rest of the SAT instance.
 
     Min-Certificate:
-        A smallest set of assignments for variables s.t. the rest of the SAT instance is satisfied by a cascade.
+        A smallest set of assignments for variables s.t. a Cascade satisfies the rest of the SAT instance.
 
     Flattened Certificate:
-        The complete set of assignments, both chosen and those by cascade.
+        The complete set of assignments, both chosen and those by Cascade.
 
     Compatibility:
         Two certificates are compatible if there are no conflicts between their flattened versions.
 
     Applying a Certificate:
-        Setting variables as per the certificate and also following the resulting cascade.
+        Setting variables as per the certificate and following the resulting Cascade.
 
     Combining two certificates:
         Two certificates can be combined if they are compatible.
