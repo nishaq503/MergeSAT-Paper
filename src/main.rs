@@ -1,5 +1,7 @@
-use merge_sat::instance::{Clause, Instance};
 use std::{env, fs};
+
+use merge_sat::clause::Clause;
+use merge_sat::instance::Instance;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -34,7 +36,7 @@ fn main() {
             clauses.push(Clause::new(literals));
         }
     }
-    let instance = Instance::new(clauses, vec![]);
+    let instance = Instance::new(clauses);
     println!("Read CNF instance with {} variables in {} clauses.", m, n);
     println!("{}", instance);
 }

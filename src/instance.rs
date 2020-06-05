@@ -1,57 +1,24 @@
 use std::fmt::{Display, Formatter, Result};
-use std::collections::HashMap;
 
-/// A Clause is represented as a Vec of integers.
-/// Each integer value represents a variable, and the sign represents whether a variable is negated.
-/// For example, the vec [3, -1, 4] represents the clause (x_3 or (not x_1) or x_4).
-#[derive(Debug, PartialEq, Eq, Clone, Hash)]
-pub struct Clause {
-    literals: Vec<i64>,
-}
-
-impl Display for Clause {
-    fn fmt(&self, f: &mut Formatter) -> Result {
-        write!(f, "{}", self.to_string())
-    }
-}
-
-impl Clause {
-    pub fn new(literals: Vec<i64>) -> Clause {
-        Clause { literals }
-    }
-
-    pub fn to_string(&self) -> String {
-        self.literals
-            .iter()
-            .map(|x| x.to_string())
-            .collect::<Vec<String>>()
-            .join(" ")
-    }
-
-    pub fn len(&self) -> usize {
-        self.literals.len()
-    }
-
-    pub fn apply(&self, certificate: &Certificate) -> Clause {
-        // TODO: Redo after proper API design
-        let mut literals: Vec<i64> = vec![];
-        for &literal in self.literals.iter() {
-            match certificate.get(literal) {
-                Assignment::False => { continue; },
-                _ => literals.push(literal)
-            }
-        }
-        Clause::new(literals)
-    }
-}
+use crate::certificate::{Assignment, Certificate};
+use crate::clause::{AppliedClause, Clause};
 
 /// An Instance is represented as a Vec of Clauses.
 /// For example, the vec [C_1, C_2, C_3] represents the instance (C_1 and C_2 and C_3).
 /// An Instance has an associated vec of Certificates.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Instance {
     clauses: Vec<Clause>,
     certificates: Vec<Certificate>,
+    gimmes: Certificate,
+}
+
+/// Return type from application of a certificate to an instance.
+#[derive(Debug, PartialEq, Eq, Clone)]
+pub enum AppliedInstance {
+    True,
+    False,
+    Undecided(Instance),
 }
 
 impl Display for Instance {
@@ -61,8 +28,28 @@ impl Display for Instance {
 }
 
 impl Instance {
-    pub fn new(clauses: Vec<Clause>, certificates: Vec<Certificate>) -> Instance {
-        Instance { clauses, certificates }
+    pub fn new(clauses: Vec<Clause>) -> Instance {
+        Instance {
+            clauses,
+            certificates: vec![],
+            gimmes: Certificate::empty(),
+        }
+    }
+
+    pub fn new_with_certificates(clauses: Vec<Clause>, certificates: Vec<Certificate>) -> Instance {
+        Instance {
+            clauses,
+            certificates,
+            gimmes: Certificate::empty(),
+        }
+    }
+
+    pub fn new_from_other(other: &Instance) -> Instance {
+        Instance {
+            clauses: other.clauses.clone(),
+            certificates: other.certificates.clone(),
+            gimmes: other.gimmes.clone(),
+        }
     }
 
     pub fn to_string(&self) -> String {
@@ -77,54 +64,72 @@ impl Instance {
         self.clauses.len()
     }
 
-    pub fn apply(&self, certificate: &Certificate) -> Instance {
-        // TODO
-        Instance::new(self.clauses.clone(), self.certificates.clone())
-    }
-}
-
-/// An Assignment for a variable is either True, False, or Unassigned.
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
-pub enum Assignment {
-    True = 1,
-    False = -1,
-    Unassigned = 0,
-}
-
-/// A certificate is represented by a HashMap of Index to Assignment,
-/// where the index represents a variable.
-/// A certificate knows which Instance it is associated with.
-#[derive(Debug, PartialEq, Eq, Clone)]
-pub struct Certificate {
-    assignments: HashMap<u64, Assignment>,
-}
-
-impl Certificate {
-    pub fn new(assignments: HashMap<u64, Assignment>) -> Certificate {
-        Certificate { assignments }
+    pub fn apply(&self, certificate: &Certificate) -> AppliedInstance {
+        let mut new_clauses: Vec<Clause> = vec![];
+        for clause in self.clauses.iter() {
+            let new_clause: AppliedClause = clause.apply(certificate);
+            match new_clause {
+                AppliedClause::True => {
+                    continue;
+                }
+                AppliedClause::False => {
+                    return AppliedInstance::False;
+                }
+                AppliedClause::Undecided(new_clause) => {
+                    new_clauses.push(new_clause);
+                }
+            }
+        }
+        AppliedInstance::Undecided(Instance::new_with_certificates(
+            self.clauses.clone(),
+            self.certificates.clone(),
+        ))
     }
 
-    pub fn get(&self, literal: i64) -> Assignment {
-        // TODO: make this less verbose
-        match self.assignments.get(&(literal.abs() as u64)) {
-            Some(&value) => {
-                match literal.signum() {
-                    1 => value.clone(),
+    pub fn purify(&self) -> AppliedInstance {
+        // TODO: Should this be a method in Certificate instead of Instance?
+        let mut new_instance: Instance = Instance::new_from_other(self);
+        let mut new_gimmes: Certificate = Certificate::empty();
+        loop {
+            for clause in new_instance.clauses.iter() {
+                match clause.len() {
+                    0 => {
+                        return AppliedInstance::False;
+                    }
+                    1 => {
+                        let literal = clause[0];
+                        let assignment: Assignment = match literal / literal.abs() {
+                            1 => Assignment::True,
+                            -1 => Assignment::False,
+                            _ => panic!("x / x.abs() should have been either 1 or -1"),
+                        };
+                        new_gimmes.insert(literal.abs() as u64, assignment);
+                        new_instance
+                            .gimmes
+                            .insert(literal.abs() as u64, assignment);
+                    }
                     _ => {
-                        match value {
-                            Assignment::True => Assignment::False,
-                            Assignment::False => Assignment::True,
-                            Assignment::Unassigned => Assignment::Unassigned,
-                        }
+                        continue;
                     }
                 }
             }
-            None => Assignment::Unassigned
+            if new_gimmes.len() == 0 {
+                break;
+            }
+            else {
+                match new_instance.apply(&new_gimmes) {
+                    AppliedInstance::True => {
+                        return AppliedInstance::True;
+                    }
+                    AppliedInstance::False => {
+                        return AppliedInstance::False;
+                    }
+                    AppliedInstance::Undecided(instance) => {
+                        new_instance = instance;
+                    }
+                }
+            }
         }
-    }
-
-    pub fn flatten(&self, instance: &Instance) -> Certificate {
-        // TODO
-        Certificate::new(HashMap::new())
+        AppliedInstance::Undecided(new_instance)
     }
 }

@@ -1,3 +1,5 @@
+pub mod certificate;
+pub mod clause;
 pub mod instance;
 
 #[cfg(test)]
