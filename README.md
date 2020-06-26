@@ -1,4 +1,3 @@
-# MergeSAT
+# MergeSAT Paper
 
-This repo contains my attempt at writing a new SAT solver.
-Let's see where it goes.
+This repo contains the Paper for my SAT solver MergeSAT.
