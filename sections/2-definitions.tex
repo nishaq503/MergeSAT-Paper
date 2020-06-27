@@ -127,20 +127,6 @@ From two such instances and certificates, we note that $\rchi_1 \cup \rchi_2$ is
 \end{definition}
 
 \begin{comment}
-    Cascade of assignments:
-        Assignments made due to Unit Clauses and Pure Literals.
-        Cascades can be chained, e.g. assigning a Unit Clause may cause the formation of other unit clauses.
-        A chain of Cascades is also a Cascade.
-
-    Certificate:
-        A set of assignments for variables s.t. a Cascade satisfies the rest of the SAT instance.
-
-    Min-Certificate:
-        A smallest set of assignments for variables s.t. a Cascade satisfies the rest of the SAT instance.
-
-    Flattened Certificate:
-        The complete set of assignments, both chosen and those by Cascade.
-
     Compatibility:
         Two certificates are compatible if there are no conflicts between their flattened versions.
 
