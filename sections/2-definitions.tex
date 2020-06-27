@@ -91,29 +91,19 @@ For the remainder of this paper, the term certificate will be overloaded with th
     If $\Phi$ is satisfiable then so are its child instances $\phi_{left}$ and $\phi_{right}$.
     In other words, if $\Phi$ has a certificate then each child instance has at least one certificate.
     We call the certificates for child instances child certificates.
-
-    Given $\Phi$ and $\rchi$, we can find a child certificate, $\rchi_{child}$, for $\phi_{child}$ by taking the subset of $\rchi$ of mappings of the variables that are present in $\phi_{child}$.
 \end{definition}
 
 \begin{definition}[Compatibility]
 \label{def:compatibility}
     Given two instances, $\phi_1$ and $\phi_2$, and their respective certificates, $\rchi_1$ and $\rchi_2$, we define compatibility in the following way.
     \begin{align*}
-        & \rchi_1~ is~ compatible~ with~ \phi_2 \\
-        \Leftrightarrow~ & \phi_1(\rchi_2)~ is~ either~ True~ or~ Undecided
-    \end{align*}
-
-    We can also define compatibility among two certificates.
-    If every variable that is assigned a truth value in both $\rchi_1$ and $\rchi_2$ is assigned the \textbf{same} truth value in both $\rchi_1$ and $\rchi_2$, then $\rchi_1$ and $\rchi_2$ are compatible with each other.
-    \begin{align*}
         & \rchi_1~ is~ compatible~ with~ \rchi_2 \\
-        \Leftrightarrow~ & \forall x_j \in (\rchi_1 \cap \rchi_2) \\
-        & we~ have~ \rchi_1(x_j) \equiv \rchi_2(x_j)
+        \Leftrightarrow~ & \forall x_j \in \rchi_1 \cap \rchi_2, \rchi_1(x_j) \equiv \rchi_2(x_j) \\
+        and~ & \phi_1(\rchi_2)~ is~ either~ True~ or~ Undecided \\
+        and~ & \phi_2(\rchi_1)~ is~ either~ True~ or~ Undecided \\
+        and~ & \Phi(\rchi_1 \cup \rchi_2)~ is~ True,~ where~ \Phi = \phi_1 \land \phi_2
     \end{align*}
 \end{definition}
-
-Note that if $\rchi_1$ is compatible with $\phi_2$ and $\rchi_2$ is compatible with $\phi_1$ then $\rchi_1$ is compatible with $\rchi_2$.
-From two such instances and certificates, we note that $\rchi_1 \cup \rchi_2$ is a certificate for $\phi_1 \land \phi_2$.
 
 \begin{definition}[Base-Case Instance]
 \label{def:base-case-instance}
