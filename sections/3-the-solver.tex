@@ -1,0 +1,55 @@
+Let's first define some sub-problems and consider how to solve each of them.
+Then we will put them together into a complete solver.
+
+\subsection{Partitioning an Instance}
+\label{subsec:partitioning-an-instance}
+
+Given an instance $\Phi$ with variables $\{ x_1 \dots x_n \}$, we can partition $\Phi$ into two child instances about the variable $x_i$ by whether the clauses in $\Phi$ contain the variable $x_i$.
+Without loss of generality, we can have $\phi_{left}$ be the conjunction of clauses that each \textbf{contain} the variable $x_1$, and $\phi_{right}$ be the conjunction of clauses that each \textbf{do not contain} the variable $x_1$.
+
+Note that $\phi_{left}$ is a pure instance and $\phi_{right}$ is a smaller instance of the same form as $\Phi$.
+$\phi_{left}$ can be further partitioned into two instances, $\phi_{left, 1}$ and $\phi_{left, 2}$, such that $x_1$ is a pure literal in $\phi_{left, 1}$ and $\lnot x_1$ is a pure literal in $\phi_{left, 2}$.
+$\phi_{left_1}$ and $\phi_{left, 2}$ are of sizes $(k_l,~ m_l,~ n_l)$ with $k_l \leq k - 1$, $m_l \leq m$ and $n_l \leq n$.
+$\phi_{right}$ is of size $(k_r,~ m_r,~ n_r)$ with $k_r \leq k$, $m_r \leq m - 1$ and $n_r \leq n - 2$.
+
+After each partition, we remove all unit clauses and pure literals from the child instances.
+
+\subsection{Solving a Pure Instance}
+\label{subsec:solving-a-pure-instance}
+
+Given a pure instance $\phi$ with the common \textit{variable} $x_j$, we can further partition $\phi$ into two child instances $\phi_1$ and $\phi_2$ such that $\phi_1$ contains only those clauses that contain the literal $x_j$ and $\phi_2$ contains only those clauses that contain the literal $\lnot x_j$.
+
+$\phi$ is satisfiable if and only if $\phi_1$ and $\phi_2$ are both satisfiable and there are certificates $\rchi_1$ for $\phi_1$, and $\rchi_2$ for $\phi_2$ such that $\rchi_1$ is compatible with $\rchi_2$.
+
+We find all certificates for $\phi_1$ and for $\phi_2$.
+For $\phi_1$, one possible certificate is $\{ x_j \mapsto True \}$ but this is not compatible with any certificate for $\phi_2$.
+In order to find the other certificates, we start with $\{ x_j \mapsto False \}$ and reduce $\phi_1$ to a smaller SAT instance.
+We then recursively find all certificates for that instance.
+By symmetry, $\phi_2$ must be satisfied by starting with $\{ x_j \mapsto True \}$ and finding all certificates for the resulting instance.
+
+
+\subsection{Combining Two Certificates}
+\label{subsec:combining-two-certificates}
+
+Given two instances $\phi_1$ and $\phi_2$ and their respective certificates $\rchi_1$ and $\rchi_2$, if $\rchi_1$ and $\rchi_2$ are compatible with each other, they can be merged.
+If $\rchi_1$ and $\rchi_2$ are compatible, they are two sets of assignments for variables with no conflicts among assignments, $\rchi_1$ and $\rchi_2$ can be combined into a certificate for $\Phi \coloneqq \phi_1 \land \phi_2$ by simply taking the union of the two sets.
+Thus, $\rchi \coloneqq \rchi_1 \cup \rchi_2$ is a certificate for $\Phi$.
+
+
+\subsection{Finding Parent Certificates}
+\label{subsec:finding-parent-certificates}
+
+Given two sibling instances and all of their respective certificates, $\big(\phi_{left},~ \{ \rchi_{left} \}\big)$ and $\big(\phi_{right},~ \{ \rchi_{right} \}\big)$, we can find all certificates for the parent instance by performing a pair-wise merge of all compatible pairs of certificates from $\{ \rchi_{left} \}$ and $\{ \rchi_{right} \}$.
+
+Note that $\Phi$ is satisfiable if and only if $\exists~ \rchi_{left}, \rchi_{right}$ such that $\rchi_{left}$ and $\rchi_{right}$ are mutually compatible.
+If there is no such pair of compatible certificates, then the parent instance is unsatisfiable.
+
+\subsection{The Solver}
+\label{subsec:the-solver}
+
+Let's piece together the sub-problems into the complete algorithm.
+
+Given a SAT instance $\Phi$, we can partition it into a pure instance $\phi_{pure}$ and a smaller instance $\phi_{right}$.
+We solve $\phi_{pure}$ as discussed in~\ref{subsec:solving-a-pure-instance} and find all certificates for $\phi_{pure}$.
+We recursively solve $\phi_{right}$ to find all certificates for $\phi_{right}$.
+We then find all certificates for $\Phi$ as discussed in~\ref{subsec:finding-parent-certificates}.
