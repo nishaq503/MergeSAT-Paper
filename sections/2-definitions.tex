@@ -105,26 +105,13 @@ For the remainder of this paper, the term certificate will be overloaded with th
     \end{align*}
 \end{definition}
 
-\begin{definition}[Base-Case Instance]
-\label{def:base-case-instance}
-    A base-case instance, $\phi_{base}$, is a special case of an instance in which all clauses have a variable, or its negation, in common.
+\begin{definition}[Pure Instance]
+    \label{def:pure-instance}
+    A pure instance, $\phi_{pure}$, is a special case of an instance in which all clauses have a variable in common.
     \begin{align*}
         let~ \phi_{base} & \coloneqq C_1 \land C_2 \land \ldots \land C_m \\
         s.t.~ either~ x_j & \in C_i~ or~ \lnot x_j \in C_i \\
-        for~ each~ i & \in \{ 1 \dots m \} \\
-        for~ some~ j & \in \{ 1 \dots n \}
+        for~ some~ j & \in \{ 1 \dots n \} \\
+        for~ all~ i & \in \{ 1 \dots m \}
     \end{align*}
 \end{definition}
-
-\begin{comment}
-    Compatibility:
-        Two certificates are compatible if there are no conflicts between their flattened versions.
-
-    Applying a Certificate:
-        Setting variables as per the certificate and following the resulting Cascade.
-
-    Combining two certificates:
-        Two certificates can be combined if they are compatible.
-        The combined certificate is the union of assignments made by choice in either certificate.
-
-\end{comment}
